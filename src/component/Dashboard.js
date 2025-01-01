@@ -10,6 +10,7 @@ import Button from 'react-bootstrap/Button';
 import { UserContext } from "./Context";
 import { useContext } from "react";
 import Shimmer from "./Shimmer";
+import {jsPDF} from "jspdf";
 function Dashboard() {
   const [input, setInput] = useState(""); // Author name input
   const [type, setType] = useState(""); // Content type filter
@@ -57,6 +58,55 @@ function Dashboard() {
     },
     colors: ["#8AD1C2", "#9F8AD1", "#D18A99", "#BCD18A", "#D1C28A"],
   };
+  const downloadCSV=()=>{
+    const header=['Author','Articles','Payout'];
+    const rows=Object.entries(authorvalue).map(([keys,value])=>[keys,value,calculateValueforOneAuthor(keys)]);
+    let csvContent="data:text/csv;charset=utf-8,"+header.join(",")+"\n";
+    rows.forEach((rowArray)=>{
+      let row=rowArray.join(",");
+      csvContent+=row+"\n";
+    });
+    const encodedUri=encodeURI(csvContent);
+    const link=document.createElement('a');
+    link.setAttribute('href',encodedUri);
+    link.setAttribute('download','payout_data.csv');
+    document.body.appendChild(link);
+    link.click();
+  };
+  const downloadPDF=()=>{
+    const doc=new jsPDF();
+     let y=10;
+     doc.setFontSize(20);
+     doc.text("Payout Data",14,y);
+     y+=10;
+     doc.setFontSize(12);
+     doc.text("Author",14,y);
+     doc.text("Articles",50,y);
+     doc.text("Payout",100,y);
+     y+=10;
+     Object.entries(authorvalue).forEach(([name, count]) => {
+      doc.text(name, 14, y); // Author name
+      doc.text(count.toString(), 50, y); // Count (or Articles)
+      const payout = calculateValueforOneAuthor(name);
+      if (payout !== undefined) {
+        doc.text(payout.toString(), 100, y); // Payout
+      } else {
+        console.error(`Failed to calculate payout for author: ${name}`);
+      }
+      y += 10;
+    });
+    doc.text("total",14,y);
+    doc.text(countAllValues().toString(),100,y);
+    // Save PDF
+    doc.save("payout_data.pdf");
+  
+  };
+  const downloadGoogleSheets = () => {
+    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQJmW7fFdfKto-harJeUzXoAkowVgXbIV9l2g2brPq44jslX3-Nmcw5TThQ6FnQFddt7erEz5yZzIRxy/pub?output=xlsx";
+  
+    window.open(sheetUrl, "_blank");
+  };
+  
   return (
     <section className="dashboard_section">
       <Container>
@@ -211,9 +261,10 @@ function Dashboard() {
       <p style={{fontWeight:"800",fontSize:"1.2rem",marginBottom:"0",color:"rgb(22 40 55);"}}>Export Data as..</p>
       </div>
       <div className="mt-1">
-       <button className="mybutton mybutton1">PDF</button>
-       <button className="mybutton">CSV</button>
-       <button className="mybutton">Google Sheets</button>
+      <button className="mybutton mybutton1" onClick={downloadPDF}>PDF</button>
+      <button className="mybutton" onClick={downloadCSV}>CSV</button>
+      <button className="mybutton" onClick={downloadGoogleSheets}>Google Sheets</button>
+
       </div>
       </div>
       
