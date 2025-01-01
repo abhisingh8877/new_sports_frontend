@@ -12,7 +12,7 @@ const Context = (props) => {
   useEffect(() => {
     const findNews = async () => {
       try {
-        const response = await fetch("https://sport-dunia-backend.onrender.com/api/articles/News");
+        const response = await fetch("https://sportduniabackend-production.up.railway.app/api/articles/News");
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -35,7 +35,7 @@ const Context = (props) => {
     findNews();
     const findPayValue=async()=>{
         try{
-            const response=await fetch("https://sport-dunia-backend.onrender.com/api/payout/findPay");
+            const response=await fetch("https://sportduniabackend-production.up.railway.app/api/payout/findPay");
             if(!response.ok)
             {
                 throw new Error(`HTTP error! Status: ${response.status}`);
