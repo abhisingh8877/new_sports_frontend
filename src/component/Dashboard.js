@@ -11,6 +11,7 @@ import { UserContext } from "./Context";
 import { useContext } from "react";
 import Shimmer from "./Shimmer";
 import {jsPDF} from "jspdf";
+import Barchart from "./BarChar";
 function Dashboard() {
   const [input, setInput] = useState(""); // Author name input
   const [type, setType] = useState(""); // Content type filter
@@ -274,13 +275,14 @@ function Dashboard() {
       </Col>
       <Col>
        <div className="piechart mt-2">
-       <Chart
+       {/* <Chart
       chartType="PieChart"
       data={data}
       options={options}
       width={"100%"}
       height={"400px"}
-    />
+    /> */}
+      <Barchart/>
        </div>
       </Col>
       </Row>
